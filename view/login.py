@@ -9,18 +9,18 @@ from model.mongodb import conn_mongodb
 
 secret_key = "gonitproject"
 
-user_login = Blueprint('login',__name__)
+user_login = Blueprint('login',__name__)#login/login_teacher
 mongo_db = conn_mongodb()
 
 @user_login.route('/login_teacher',methods = ['POST'])
 def login():
     new_user = request.get_json()
     id = new_user['id']
-    pw = new_user['pw']
+    pw = new_user['password']
     
     row = mongo_db.find_one({'id':id})
     #print(row)
-    print(type(pw))
+    print(pw)
     
     #들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
     #pw.encode('UTF-8')은 유니코드 문자열인 PW를 UTF-8방식을 이용하여 바이트 문자열로 인코딩, row는 이미 바이트 문자열이다.
@@ -33,9 +33,15 @@ def login():
         token = jwt.encode(payload,secret_key,'HS256')
         print("ok")
         print(type(token))
-        return jsonify({
-            #'access_token' : token.decode('UTF-8')#바이트 문자열인 token을 유니코드 문자열로 decodeing해서 넘겨준다.
-            'access_token' : token#바이트 문자열인 token을 유니코드 문자열로 decodeing해서 넘겨준다.
+        #print("row"+row['account'])
+        #make_response(jsonify(success = True), 200)
+        return jsonify(
+            {
+                'code':"200",
+                'id': row['id'],
+                'account' : row['account'],
+                'full_name': row['full_name'],
+                'access_token' : token
         })
     else:
         print("ok")

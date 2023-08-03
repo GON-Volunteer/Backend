@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, make_response, session
 from flask_login import LoginManager,current_user, login_required,login_user, logout_user
 from flask_cors import CORS
-from view import sign_up,login,main_page
+from view import sign_up,login
 from model.mongodb import make_collection
 #from blog_control.user_mgmt import User
 import os
@@ -18,10 +18,7 @@ make_collection()
 app.secret_key = 'dave_server3'#session 생성시 이 앱만의 secret key
 
 app.register_blueprint(sign_up.user_sign_up, url_prefix = '/signup')
-app.register_blueprint(login.user_login, url_prefix = '/login')
-app.register_blueprint(main_page.home_page, url_prefix = '/home')
-
-
+app.register_blueprint(login.user_login, url_prefix = '/api/login')
 
 @app.route('/')
 def home():

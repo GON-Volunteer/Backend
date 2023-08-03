@@ -18,8 +18,10 @@ class Teacher():
         mongo_db.insert_one({
             "id" : id,
             "hashed_pw" : hashed_pw,
+            "account":account,
             "full_name" : full_name,
             "phone_num" : phone_num,
-            "teacher_course" : teacher_course
+            "teacher_course" : teacher_course,
+            "account":account
         })
         
