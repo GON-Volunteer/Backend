@@ -1,11 +1,8 @@
 from model.mongodb import conn_mongodb
 
 class Board():
-    def __init__(self,title,no,publish_date,content,board_course):
+    def __init__(self,title,publish_date,course_id):
         self.title = title
-        self.no = no
         self.publish_date = publish_date
-        self.content = content
-        self.board_course = board_course
-    
+        self.course_id = course_id
 
