@@ -19,11 +19,9 @@ def login():
     pw = new_user['password']
     
     row = mongo_db.student.find_one({'id':id})
-    #print(row)
-    print(pw)
     
-    #들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
     #pw.encode('UTF-8')은 유니코드 문자열인 PW를 UTF-8방식을 이용하여 바이트 문자열로 인코딩, row는 이미 바이트 문자열이다.
+    #들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
     if row and bcrypt.checkpw(pw.encode('UTF-8'),row['hashed_pw']):
         user_id = row['id'],
         payload = {
@@ -31,11 +29,7 @@ def login():
             'exp' : datetime.utcnow()+timedelta(seconds = 60*60*24)#24시간 유효,UTC (협정 세계시)로 현재 날짜와 시간을 가져온다.
         }
         token = jwt.encode(payload,secret_key,'HS256')
-        print("ok")
-        print(row['_id'])
-        #print(type(token))
-        #print("row"+row['account'])
-        #make_response(jsonify(success = True), 200)
+        
         return jsonify( 
             {
                 'code':"200",
@@ -45,7 +39,16 @@ def login():
                 'access_token' : token
         })
         
-        
     else:
-        print("ok")
-        return make_response(jsonify(success = False), 400)
+        return jsonify({"code":"400"})
+
+# request헤더에서 토큰 받아오는 법 request.headers.get('Authorization')
+def check_access_token(access_token):
+    try:
+        payload = jwt.decode(access_token,secret_key,"HS256")
+        #payload['exp']는 Numeric date 타입이고 datetime.utcnow()는 datetime.datetime타입이므로  Numeric date타입을 (UNIX 타임스탬프)로 변환
+        if datetime.fromtimestamp(payload['exp']) < datetime.utcnow():
+            payload = None
+    except:
+        payload = None 
+    return payload
