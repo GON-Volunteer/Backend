@@ -18,7 +18,6 @@ def student_add():
     new_user = request.get_json()
 
     access_token = request.headers.get('Authorization')
-    print(access_token)
     check_access = check_access_token(access_token)
 
     if not check_access:
@@ -50,9 +49,8 @@ def student_crud(student_id):
         return jsonify({"code":"400", "message" : "토큰이 유효하지 않거나 만료되었습니다."})
     
     if request.method == "DELETE":
-        print("delete enter")
         Student.delete_student(student_id)
-        return jsonify({"code":"200"})
+        return jsonify({"code":"200","message":"삭제가 완료되었습니다."})
     
     if request.method == "PATCH":
         input_data = request.json
