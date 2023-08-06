@@ -26,6 +26,7 @@ def login():
         user_id = row['id'],
         payload = {
             'user_id' : user_id,
+            'account' : row['account'],
             'exp' : datetime.utcnow()+timedelta(seconds = 60*60*24)#24시간 유효,UTC (협정 세계시)로 현재 날짜와 시간을 가져온다.
         }
         token = jwt.encode(payload,secret_key,'HS256')
@@ -42,13 +43,3 @@ def login():
     else:
         return jsonify({"code":"400"})
 
-# request헤더에서 토큰 받아오는 법 request.headers.get('Authorization')
-def check_access_token(access_token):
-    try:
-        payload = jwt.decode(access_token,secret_key,"HS256")
-        #payload['exp']는 Numeric date 타입이고 datetime.utcnow()는 datetime.datetime타입이므로  Numeric date타입을 (UNIX 타임스탬프)로 변환
-        if datetime.fromtimestamp(payload['exp']) < datetime.utcnow():
-            payload = None
-    except:
-        payload = None 
-    return payload

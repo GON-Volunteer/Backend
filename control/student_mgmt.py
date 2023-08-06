@@ -1,6 +1,8 @@
 from model.mongodb import conn_mongodb
 from flask_login import UserMixin
 from bson import ObjectId
+from flask import jsonify
+
 
 class Student():
     def __init__(self,id,hashed_pw,account,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num, course_id):
@@ -44,15 +46,22 @@ class Student():
         mongo_db.student.delete_one(delete_condition)
     
     
-    def edit_student(id,hashed_pw,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num):
+    
+    def edit_student(target,new_data):
         mongo_db = conn_mongodb()
-        mongo_db.student.update_one({
-            "id" : id,
-            "hashed_pw" : hashed_pw,
-            "s_n" : s_n,
-            "full_name" : full_name,
-            "phone_num" : phone_num,
-            "father_phone_num" : father_phone_num,
-            "mother_phone_num" : mother_phone_num,
-            "guardians_phone_num" : guardians_phone_num
-        })
+        print("enter edit_student")
+        result = mongo_db.student.update_one(target,new_data)
+        print(result.modified_count) 
+        return result
+    
+    def check_is_unique(input_id,input_sn):
+        mongo_db = conn_mongodb()
+        exist_id = mongo_db.student.find_one({'id':input_id})
+        exist_s_n = mongo_db.student.find_one({'s_n':input_sn})
+        print(exist_id)
+        print(exist_s_n)
+        
+        if exist_id or exist_s_n:
+            return False
+        else:
+            return True
