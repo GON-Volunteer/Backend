@@ -12,37 +12,29 @@ student = Blueprint('students',__name__)#blueprint 객체 생성
 
 mongo_db = conn_mongodb()
 
-@student.route('/', methods = ['POST'])
+@student.route('/', methods = ['POST','GET'])
 def student_add():
-    new_user = request.get_json()
-
-    # access_token = request.headers.get('Authorization')
-    # check_access = check_access_token(access_token)
-
-    # if not check_access:
-    #     return jsonify({"code":"400", "message" : "토큰이 유효하지 않거나 만료되었습니다."})
-    
-    if not Student.check_is_unique(new_user['id'],new_user['pw']):
-        return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
-    else:
-        #입력받은 비밀번호 암호화하여 db저장
-        new_user['pw'] = bcrypt.hashpw(new_user['pw'].encode('UTF-8'),bcrypt.gensalt())
+    if request.method == 'POST':
+        new_user = request.get_json()
         
-        #id,hashed_pw,account,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num
-        Student.add_student(new_user['id'],new_user['pw'],new_user['account'],new_user['s_n'],new_user['full_name'],
-                            new_user['phone_num'],new_user['father_phone_num'],new_user['mother_phone_num'],new_user['guardians_phone_num'])
+        if not Student.check_is_unique(new_user['id'],new_user['pw']):
+            return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
+        else:
+            #입력받은 비밀번호 암호화하여 db저장
+            new_user['pw'] = bcrypt.hashpw(new_user['pw'].encode('UTF-8'),bcrypt.gensalt())
+            
+            #id,hashed_pw,account,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num
+            Student.add_student(new_user['id'],new_user['pw'],new_user['account'],new_user['s_n'],new_user['full_name'],
+                                new_user['phone_num'],new_user['father_phone_num'],new_user['mother_phone_num'],new_user['guardians_phone_num'])
 
-        return jsonify({'code':"200",'message':'회원가입 성공!'})
+            return jsonify({'code':"200",'message':'회원가입 성공!'})
+    elif request.method == 'GET':
+            student_list = mongo_db.student.find().sort({'s_n':1})
+            print(student_list)
+            
 
 @student.route('/<student_id>', methods = ['DELETE','PATCH'])
 def student_crud(student_id):
-    
-    # access_token = request.headers.get('Authorization')
-    # print(access_token)
-    # check_access = check_access_token(access_token)
-
-    # if not check_access:
-    #     return jsonify({"code":"400", "message" : "토큰이 유효하지 않거나 만료되었습니다."})
     
     if request.method == "DELETE":
         Student.delete_student(student_id)
@@ -74,7 +66,8 @@ def student_crud(student_id):
                 return jsonify({"code":"400","message":"수정할 학생을 찾을 수 없습니다."})
             else:
                 return jsonify({'code':"200",'message':'학생정보 수정성공!'})
-        
+                
+
     
     
     
