@@ -46,7 +46,6 @@ class Student():
         mongo_db.student.delete_one(delete_condition)
     
     
-    
     def edit_student(target,new_data):
         mongo_db = conn_mongodb()
         print("enter edit_student")
