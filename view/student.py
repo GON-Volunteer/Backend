@@ -7,6 +7,8 @@ from control.teacher_mgmt import Teacher
 from model.mongodb import conn_mongodb
 from control.student_mgmt import Student
 from bson import ObjectId
+from bson.json_util import dumps
+import json
 
 student = Blueprint('students',__name__)#blueprint 객체 생성
 
@@ -17,7 +19,7 @@ def student_add():
     if request.method == 'POST':
         new_user = request.get_json()
         
-        if not Student.check_is_unique(new_user['id'],new_user['pw']):
+        if not Student.check_is_unique(new_user['id'],new_user['s_n']):
             return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
         else:
             #입력받은 비밀번호 암호화하여 db저장
@@ -29,9 +31,16 @@ def student_add():
 
             return jsonify({'code':"200",'message':'회원가입 성공!'})
     elif request.method == 'GET':
-            student_list = mongo_db.student.find().sort({'s_n':1})
-            print(student_list)
-            
+        page =int(request.args.get('page'))
+        size = int(request.args.get('size'))
+        
+        result = mongo_db.student.find().sort("s_n",1).skip(size*(page-1)).limit(size)
+        
+        serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
+        json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
+        
+        return json_data
+        
 
 @student.route('/<student_id>', methods = ['DELETE','PATCH'])
 def student_crud(student_id):
@@ -51,7 +60,7 @@ def student_crud(student_id):
 
             new_data = {"$set":{
                 'id': input_data['id'],
-                'hashed_pw' : input_data['pw'],
+                 'hashed_pw' : input_data['pw'],
                 's_n' : input_data['s_n'],
                 'full_name' : input_data['full_name'],
                 'phone_num' : input_data['phone_num'],
@@ -59,7 +68,7 @@ def student_crud(student_id):
                 'mother_phone_num' : input_data['mother_phone_num'],
                 'guardians_phone_num' : input_data['guardians_phone_num']
                 }}
-            
+            print("hello")
             result = Student.edit_student(target,new_data)
         
             if result.modified_count == 0:
