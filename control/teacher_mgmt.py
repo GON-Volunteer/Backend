@@ -50,7 +50,7 @@ class Teacher():
         mongo_db.teacher.delete_one(delete_condition)
     
     def edit_teacher(target,new_data):
-        mongo_db = conn_mongodb()
+        mongo_dbdb = conn_mongodb()
         print("enter edit_student")
         result = mongo_db.teacher.update_one(target,new_data)
         print(result.modified_count) 

@@ -8,6 +8,7 @@ from control.teacher_mgmt import Teacher
 from model.mongodb import conn_mongodb
 from control.student_mgmt import Student
 from control.subject_mgmt import Subject
+from control.course_mgmt import Course
 from bson import ObjectId
 
 subject = Blueprint('subjects',__name__)#blueprint 객체 생성
@@ -44,6 +45,8 @@ def read_subjects():
 def delete_subject(subject_id):
     print("enter in delete_subjects()")
     result_message=Subject.delete_subject(subject_id)
+    Course.delete_subject(subject_id)
+
     return jsonify({'code':"200"})
     
     
