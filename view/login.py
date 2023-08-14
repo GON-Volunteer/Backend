@@ -1,4 +1,13 @@
-from flask import Flask, Blueprint, request, make_response,jsonify, redirect, url_for, session
+from flask import (
+    Flask,
+    Blueprint,
+    request,
+    make_response,
+    jsonify,
+    redirect,
+    url_for,
+    session,
+)
 from flask_login import login_user, current_user, logout_user
 import datetime
 import bcrypt
@@ -9,16 +18,16 @@ from model.mongodb import conn_mongodb
 
 secret_key = "gonitproject"
 
-user_login = Blueprint('login',__name__)#login/login_teacher
+user_login = Blueprint("login", __name__)  # login/login_teacher
 mongo_db = conn_mongodb()
-
-@user_login.route('/login_teacher',methods = ['POST'])
+"""
+@user_login.route('/',methods = ['POST'])
 def login():
     new_user = request.get_json()
     id = new_user['id']
     pw = new_user['password']
     
-    row = mongo_db.find_one({'id':id})
+    row = mongo_db.student.find_one({'id':id})
     #print(row)
     print(pw)
     
@@ -32,17 +41,21 @@ def login():
         }
         token = jwt.encode(payload,secret_key,'HS256')
         print("ok")
-        print(type(token))
+        print(row['_id'])
+        #print(type(token))
         #print("row"+row['account'])
         #make_response(jsonify(success = True), 200)
-        return jsonify(
+        return jsonify( 
             {
                 'code':"200",
-                'id': row['id'],
+                 '_id': str(row['_id']),
                 'account' : row['account'],
                 'full_name': row['full_name'],
                 'access_token' : token
         })
+        
+        
     else:
         print("ok")
         return make_response(jsonify(success = False), 400)
+"""
