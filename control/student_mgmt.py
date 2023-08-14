@@ -64,3 +64,9 @@ class Student():
             return False
         else:
             return True
+        
+    def find_by_student_id(student_id):
+        mongo_db = conn_mongodb()
+        row = mongo_db.student.find_one({'_id':student_id})
+        return row
+        

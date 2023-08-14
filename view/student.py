@@ -9,6 +9,7 @@ from control.student_mgmt import Student
 from bson import ObjectId
 from bson.json_util import dumps
 import json
+#from pymongo import MongoClient
 
 student = Blueprint('students',__name__)#blueprint 객체 생성
 
@@ -31,15 +32,26 @@ def student_add():
 
             return jsonify({'code':"200",'message':'회원가입 성공!'})
     elif request.method == 'GET':
-        page =int(request.args.get('page'))
-        size = int(request.args.get('size'))
         
-        result = mongo_db.student.find().sort("s_n",1).skip(size*(page-1)).limit(size)
+        result = mongo_db.student.find().sort("s_n",1)
+        # for x in result:
+        #     print(x)
         
         serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
-        json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
         
+        json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
+        #print(json_data)
         return json_data
+    # elif request.method == 'GET':
+    #     page =int(request.args.get('page'))
+    #     size = int(request.args.get('size'))
+        
+    #     result = mongo_db.student.find().sort("s_n",1).skip(size*(page-1)).limit(size)
+        
+    #     serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
+    #     json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
+        
+    #     return json_data
         
 
 @student.route('/<student_id>', methods = ['DELETE','PATCH'])

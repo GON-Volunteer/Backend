@@ -6,15 +6,16 @@ from bson import ObjectId
 mongo_db = conn_mongodb()
 
 class Teacher():
-    def __init__(self,id,hashed_pw,account,full_name,phone_num,course_id):
+    def __init__(self,id,hashed_pw,s_n,account,full_name,phone_num,course_id):
         self.id = id
         self.pw = hashed_pw
+        self.s_n = s_n
         self.account = account
         self.full_name = full_name
         self.phone_num = phone_num
         self.course_id = course_id
         
-    def add_teacher(id,hashed_pw,account,full_name,phone_num):
+    def add_teacher(id,hashed_pw,account,full_name,phone_num,course_id):
         mongo_db = conn_mongodb()
         mongo_db.teacher.insert_one({
             "id" : id,
@@ -22,7 +23,7 @@ class Teacher():
             "account":account,
             "full_name" : full_name,
             "phone_num" : phone_num,
-            "course_id" : None
+            "course_id" : course_id
         })
 
     def check_is_unique(input_id):
@@ -55,3 +56,8 @@ class Teacher():
         result = mongo_db.teacher.update_one(target,new_data)
         print(result.modified_count) 
         return result
+    
+    def find_by_teacher_id(teacher_id):
+        mongo_db = conn_mongodb()
+        row = mongo_db.teacher.find_one({'_id':teacher_id})
+        return row
