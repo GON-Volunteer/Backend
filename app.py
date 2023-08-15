@@ -1,12 +1,9 @@
 from flask import Flask, jsonify, request, make_response, session
 from flask_login import LoginManager,current_user, login_required,login_user, logout_user
 from flask_cors import CORS
-<<<<<<< HEAD
-from view import login,student,access_check,teacher,subject,course
-=======
-from view import login,student,access_check,teacher,pwchange,subject
 
->>>>>>> aff542cc2637d664b7eba1ef84cf3ce52d217934
+from view import login,student,access_check,teacher,pwchange,subject,course
+
 from model.mongodb import make_board_collection, make_course_collection, make_student_collection, make_subject_collection, make_teacher_collection
 #from blog_control.user_mgmt import User
 import os
