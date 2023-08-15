@@ -44,10 +44,13 @@ def create_course():
             "message": "동일한 course가 존재합니다."
         })
 
-#
-# @course.route('/', methods=['GET'])
-# def read_courses():
-#     print("enter in read_courses")
+
+@course.route('/', methods=['GET'])
+def read_courses():
+    print("enter in read_courses")
+    result=Course.get_courses()
+    return jsonify(result)
+
 
 # @subject.route('/', methods=['GET'])
 # def read_subjects():

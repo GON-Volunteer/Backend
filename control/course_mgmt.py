@@ -44,7 +44,7 @@ class Course():
             return True
 
     def add_course(grade,section,batch,subject_id):
-        print("enter course in Course class")
+        print("enter add_course in Course class")
         mongo_db = conn_mongodb()
         mongo_db.course.insert_one({
             "grade": grade,
@@ -52,3 +52,37 @@ class Course():
             "batch":batch,
             "subject_id":subject_id
         })
+
+
+    def get_courses():
+        print("enter get_courses in Course class")
+        mongo_db = conn_mongodb()
+        courses=mongo_db.course.find()
+        course_list=[]
+        for course in courses:
+            # print(course)
+            course['_id']=str(course['_id'])
+            if 'subject_id' in course:  # 'subject_id' 키가 있는지 확인
+                subject_id = course['subject_id']
+                # print(f"subject_id:{subject_id}")
+                subject_cursor = mongo_db.subject.find({'_id': ObjectId(subject_id)})
+
+                for subject_document in subject_cursor:
+                    # print("subject_document",subject_document)
+
+                    subject_name=subject_document['name']
+                    is_elective_subject=subject_document['is_elective_subject']
+                    course['subject_name']=subject_name
+                    course['is_elective_subject']=is_elective_subject
+
+                course['subject_id'] = str(course['subject_id'])
+                # print(f"modified course{course}")
+                course_list.append(course)
+
+
+            else:
+                # print("'subject_id' key not found in course:", course)
+                course_list.append(course)
+
+
+        return course_list
