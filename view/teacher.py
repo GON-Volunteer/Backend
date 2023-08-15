@@ -24,29 +24,15 @@ def teacher_add():
             
             # Teacher.add_teacher(new_user['id'],new_user['pw'],new_user['account'],new_user['full_name'],
             #                     new_user['phone_num'],new_user['course_id']) teacher조회시 course정보를 같이 출력하기 테스트를 위해 course_id 추가
+            
             Teacher.add_teacher(new_user['id'],new_user['pw'],new_user['account'],new_user['full_name'],
-                                new_user['phone_num'])
+                                new_user['phone_num'],new_user['course_id'])
 
             return jsonify({'code':"200",'message':'선생님 회원가입 성공!'})
-    # elif request.method == 'GET':
-    #     page =int(request.args.get('page'))
-    #     size = int(request.args.get('size'))
-        
-    #     result = mongo_db.teacher.find().sort("id",1).skip(size*(page-1)).limit(size)
-                
-    #     serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
-    #     json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
-        
-    #     return json_data
     elif request.method == 'GET':
-        page =int(request.args.get('page'))
-        size = int(request.args.get('size'))
-        
-        result = mongo_db.teacher.find().sort("id",1).skip(size*(page-1)).limit(size)
-        
+
+        result = mongo_db.teacher.find()
         serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
-        
-        
         json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
         
         for data in json_data:
@@ -56,7 +42,7 @@ def teacher_add():
                 'student_name' : student_row['full_name'],
                 'student_id' : student_row['id']
             }]
-              
+
         return json_data
     
 @teacher.route('/<teacher_id>', methods = ['DELETE','PATCH'])
