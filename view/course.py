@@ -52,21 +52,14 @@ def read_courses():
     return jsonify(result)
 
 
-# @subject.route('/', methods=['GET'])
-# def read_subjects():
-#     print("enter in read_subjects()")
-#     json_subject_list = Subject.get_subjects()
-#
-#     return jsonify(json_subject_list)
-#
-#
-# @subject.route('/<subject_id>', methods=['DELETE'])
-# def delete_subject(subject_id):
-#     print("enter in delete_subjects()")
-#     result_message = Subject.delete_subject(subject_id)
-#     Course.delete_subject(subject_id)
-#
-#     return jsonify({'code': "200"})
+
+
+@course.route('/<course_id>', methods=['DELETE'])
+def delete_course(course_id):
+    print("enter in delete_subjects()")
+    result_message=Course.delete_course(course_id)
+    print(result_message)
+    return jsonify({'code': "200"})
 
 
 

@@ -86,3 +86,13 @@ class Course():
 
 
         return course_list
+
+
+    def delete_course(course_id):
+        mongo_db = conn_mongodb()
+        course_id = ObjectId(course_id)
+        result = mongo_db.course.delete_one({'_id': course_id})
+        if result.deleted_count == 1:
+            return f"subject doucument with _id {course_id} deleted successfully"
+        # else:
+        #     return f"Subject document with _id {subject_id} not found or not deleted"
