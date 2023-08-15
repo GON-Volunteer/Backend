@@ -94,5 +94,14 @@ class Course():
         result = mongo_db.course.delete_one({'_id': course_id})
         if result.deleted_count == 1:
             return f"subject doucument with _id {course_id} deleted successfully"
-        # else:
-        #     return f"Subject document with _id {subject_id} not found or not deleted"
+
+
+
+    def delete_courses():
+        mongo_db = conn_mongodb()
+        result = mongo_db.course.delete_many({})
+
+        return f"삭제된 문서 수: {result.deleted_count}"
+
+
+
