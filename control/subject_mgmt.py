@@ -40,11 +40,11 @@ class Subject():
             subject_list.append(subject)
             # print(subject)
 
-        subjects_json = json.dumps(subject_list)
+
 
         # Print or use the JSON data as needed
 
-        return subjects_json
+        return subject_list
 
 
     def delete_subject(subject_id):

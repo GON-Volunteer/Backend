@@ -51,6 +51,11 @@ def read_courses():
     result=Course.get_courses()
     return jsonify(result)
 
+@course.route('/<course_id>', methods=['GET'])
+def read_course(course_id):
+    print("enter in read_courses")
+    result=Course.get_courses()
+    return jsonify(result)
 
 
 
@@ -68,3 +73,6 @@ def delete_courses(): #전체 course 삭제
     result_message=Course.delete_courses()
     print(result_message)
     return jsonify({'code': "200"})
+
+
+
