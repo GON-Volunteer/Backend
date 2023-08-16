@@ -18,7 +18,21 @@ def make_comment_collection():
     MONGO_HOST = "localhost"
     MONGO_CONN = pymongo.MongoClient("mongodb://%s" % (MONGO_HOST))
     cla_db = MONGO_CONN.cla_db
-    comment_collection = cla_db.board_collection
+    comment_collection = cla_db.comment_collection
+
+
+def make_course_board_collection():
+    MONGO_HOST = "localhost"
+    MONGO_CONN = pymongo.MongoClient("mongodb://%s" % (MONGO_HOST))
+    cla_db = MONGO_CONN.cla_db
+    course_board_collection = cla_db.course_board_collection
+
+
+def make_course_comment_collection():
+    MONGO_HOST = "localhost"
+    MONGO_CONN = pymongo.MongoClient("mongodb://%s" % (MONGO_HOST))
+    cla_db = MONGO_CONN.cla_db
+    course_comment_collection = cla_db.course_comment_collection
 
 
 def make_course_collection():

@@ -30,7 +30,8 @@ def login():
     pw = new_user["password"]
 
     row = mongo_db.student.find_one({"id": id})
-
+    if row == None:
+        row = mongo_db.teacher.find_one({"id": id})
     # pw.encode('UTF-8')은 유니코드 문자열인 PW를 UTF-8방식을 이용하여 바이트 문자열로 인코딩, row는 이미 바이트 문자열이다.
     # 들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
     if row and bcrypt.checkpw(pw.encode("UTF-8"), row["hashed_pw"]):
@@ -38,6 +39,7 @@ def login():
         payload = {
             "user_id": user_id,
             "account": row["account"],
+            "full_name": row["full_name"],
             "exp": datetime.utcnow()
             + timedelta(seconds=60 * 60 * 24),  # 24시간 유효,UTC (협정 세계시)로 현재 날짜와 시간을 가져온다.
         }
