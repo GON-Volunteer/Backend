@@ -7,7 +7,6 @@ from flask_login import (
     logout_user,
 )
 from flask_cors import CORS
-<<<<<<< HEAD
 from view import login, student
 from control import board_mgmt, comment_mgmt
 from model.mongodb import (
@@ -20,13 +19,12 @@ from model.mongodb import (
 )
 
 # from blog_control.user_mgmt import User
-=======
+
 
 from view import login,student,access_check,teacher,pwchange,subject,course
 
 from model.mongodb import make_board_collection, make_course_collection, make_student_collection, make_subject_collection, make_teacher_collection
 #from blog_control.user_mgmt import User
->>>>>>> 9160e71e8d332032b9f9e760aa08e4e453c15647
 import os
 
 # https 만을 지원하는 기능을 http 에서 테스트할 때 필요한 설정
