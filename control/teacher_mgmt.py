@@ -37,6 +37,20 @@ class Teacher():
             return False
         else:
             return True
+    
+    def check_is_unique_edit(input_id,teacher_id):
+        mongo_db = conn_mongodb()
+        exist = mongo_db.teacher.find_one({'id':input_id})
+        
+        if exist:
+            if str(exist['_id']) == teacher_id:
+                print(exist['id'])
+                print(input_id)
+                return True
+            else:
+                return False
+        else:
+            return True
         
     def delete_teacher(teacher_id):
         mongo_db = conn_mongodb()
@@ -54,9 +68,9 @@ class Teacher():
     
     def edit_teacher(target,new_data):
         mongo_db = conn_mongodb()
-        print("enter edit_student")
+        
         result = mongo_db.teacher.update_one(target,new_data)
-        print(result.modified_count) 
+        #print(result.modified_count) 
         return result
     
     def find_by_teacher_id(teacher_id):

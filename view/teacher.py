@@ -55,7 +55,7 @@ def teacher_crud(teacher_id):
     if request.method == "PATCH":
         input_data = request.json
         
-        if not Teacher.check_is_unique(input_data['id']):
+        if not Teacher.check_is_unique_edit(input_data['id'],teacher_id):
             return jsonify({"code":"400", "message" : "아이디가 중복입니다."})
         else:
             input_data['pw'] = bcrypt.hashpw(input_data['pw'].encode('UTF-8'),bcrypt.gensalt())
@@ -67,7 +67,7 @@ def teacher_crud(teacher_id):
                 'full_name' : input_data['full_name'],
                 'phone_num' : input_data['phone_num']
                 }}
-            print("hello")
+ 
             result = Teacher.edit_teacher(target,new_data)
         
             if result.modified_count == 0:

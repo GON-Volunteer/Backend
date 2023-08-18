@@ -27,7 +27,7 @@ def student_add():
             new_user['pw'] = bcrypt.hashpw(new_user['pw'].encode('UTF-8'),bcrypt.gensalt())
             
             #id,hashed_pw,account,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num
-            Student.add_student(new_user['id'],new_user['pw'],new_user['account'],new_user['s_n'],new_user['full_name'],
+            Student.add_student(new_user['id'],new_user['pw'],new_user['account'],int(new_user['s_n']),new_user['full_name'],
                                 new_user['phone_num'],new_user['father_phone_num'],new_user['mother_phone_num'],new_user['guardians_phone_num'])
 
             return jsonify({'code':"200",'message':'회원가입 성공!'})
@@ -64,7 +64,7 @@ def student_crud(student_id):
     if request.method == "PATCH":
         input_data = request.json
         
-        if not Student.check_is_unique(input_data['id'],input_data['s_n']):
+        if not Student.check_is_unique_edit(input_data['id'],input_data['s_n'],student_id):
             return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
         else:
             input_data['pw'] = bcrypt.hashpw(input_data['pw'].encode('UTF-8'),bcrypt.gensalt())
@@ -73,7 +73,7 @@ def student_crud(student_id):
             new_data = {"$set":{
                 'id': input_data['id'],
                 'hashed_pw' : input_data['pw'],
-                's_n' : input_data['s_n'],
+                's_n' : int(input_data['s_n']),
                 'full_name' : input_data['full_name'],
                 'phone_num' : input_data['phone_num'],
                 'father_phone_num' : input_data['father_phone_num'],
