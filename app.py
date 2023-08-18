@@ -3,10 +3,12 @@ from flask_login import LoginManager,current_user, login_required,login_user, lo
 from flask_cors import CORS
 
 from view import login,student,access_check,teacher,pwchange,subject,course, assign_release
+from control import board_mgmt, comment_mgmt, course_board_mgmt, course_comment_mgmt
 
 from model.mongodb import make_board_collection, make_course_collection, make_student_collection, make_subject_collection, make_teacher_collection
 #from blog_control.user_mgmt import User
 import os
+
 
 # https 만을 지원하는 기능을 http 에서 테스트할 때 필요한 설정
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -31,6 +33,15 @@ app.register_blueprint(teacher.teacher, url_prefix = '/api/teachers')
 app.register_blueprint(course.course, url_prefix = '/api/courses')
 app.register_blueprint(pwchange.password_change, url_prefix = '/api/password')
 app.register_blueprint(assign_release.assign, url_prefix = '/api/assign')
+app.register_blueprint(board_mgmt.board, url_prefix="/api/articles")
+app.register_blueprint(comment_mgmt.comment, url_prefix="/api/comment")
+app.register_blueprint(
+    course_board_mgmt.course_board, url_prefix="/api/courses/<string:coidx>/articles"
+)
+app.register_blueprint(
+    course_comment_mgmt.course_comment, url_prefix="/api/courses/<string:coidx>/comment"
+)
+
 
 @app.route('/')
 def home():

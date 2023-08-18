@@ -8,15 +8,7 @@ from bson import ObjectId
 from bson.json_util import dumps
 import json
 
-board = Blueprint("board", __name__)
-
-
-class Board:
-    def __init__(self, _id, title, publish_date, course_id):
-        self._id = _id
-        self.title = title
-        self.publish_date = publish_date
-        self.course_id = course_id
+course_board = Blueprint("course_board", __name__)
 
 
 mongo_db = conn_mongodb()
@@ -33,9 +25,9 @@ articles = db["articles"]
 
 
 # [CREATE] 게시글 생성
-@board.route("/create", methods=["POST"])
+@course_board.route("/create", methods=["POST"])
 # @jwt_required()
-def create_article():
+def create_article(coidx):
     body = literal_eval(request.get_json()["body"])
     user_id = body["user_id"]
     title = body["title"]
@@ -46,11 +38,12 @@ def create_article():
     # postingid = str(user_id) + ";" + str(publish_date)
 
     # 게시글 번호 찾기
-    current_count = mongo_db.board_collection.count_documents({})
+    current_count = mongo_db.course_board_collection.count_documents({})
     new_no = current_count + 1
 
     print(content, publish_date, type(user_id))
     article = {
+        "course_id": coidx,
         "posting_id": new_no,
         # "posting_id": postingid,
         "user_id": user_id,
@@ -63,7 +56,7 @@ def create_article():
         "commentCount": 0,
     }
 
-    result = mongo_db.board_collection.insert_one(article)  # mongodb insert
+    result = mongo_db.course_board_collection.insert_one(article)  # mongodb insert
     print("create_ok")
     return jsonify({"msg": "글생성 성공", "status": 200})
 
@@ -78,14 +71,16 @@ def date_converter(o):
 
 
 # [READ] 게시글 목록 조회
-@board.route("/", methods=["GET"])
+@course_board.route("/", methods=["GET"])
 # @jwt_required()
-def read_article_list():
+def read_article_list(coidx):
     if request.method == "GET":
         print("read_start")
 
-        # Find and sort documents in the 'board_collection'
-        result = mongo_db.board_collection.find().sort("publish_date", -1)
+        # Find and sort documents in the 'course_board_collection'
+        result = mongo_db.course_board_collection.find({"course_id": coidx}).sort(
+            "publish_date", -1
+        )
 
         # Serialize the result with BSON to JSON string
         serialized_data = dumps(result, default=date_converter)
@@ -106,17 +101,19 @@ def read_article_list():
 
 
 # [READ] 게시글 내용 읽기
-@board.route("/<int:idx>", methods=["GET"])
+@course_board.route("/<int:idx>", methods=["GET"])
 # @jwt_required()
-def read_article(idx):
+def read_article(idx, coidx):
     if request.method == "GET":
         print("read_start")
         lst = []
         date_now = datetime.now()
 
-        for m in mongo_db.board_collection.find({"posting_id": idx}):
+        for m in mongo_db.course_board_collection.find(
+            {"course_id": coidx, "posting_id": idx}
+        ):
             # Count comments using count_documents()
-            commentCount = mongo_db.comment_collection.count_documents(
+            commentCount = mongo_db.coures_comment_collection.count_documents(
                 {"posting_id": m["posting_id"]}
             )
 
@@ -153,17 +150,17 @@ def read_article(idx):
 
 
 # [UPDATE] 게시글 수정
-@board.route("/<int:idx>/update", methods=["POST"])
+@course_board.route("/<int:idx>/update", methods=["POST"])
 # @jwt_required()
-def modify_article(idx):
+def modify_article(idx, coidx):
     body = literal_eval(request.get_json()["body"])
     print(body)
     title = body["edittitle"]
     content = body["editContent"]
     date = datetime.now()
 
-    mongo_db.board_collection.update_one(
-        {"posting_id": idx},
+    mongo_db.course_board_collection.update_one(
+        {"posting_id": idx, "course_id": coidx},
         {"$set": {"title": title, "content": content, "publish_date": date}},
     )
     print("update_ok")
@@ -171,20 +168,22 @@ def modify_article(idx):
 
 
 # [DELETE] 게시글 삭제
-@board.route("/<int:idx>/delete", methods=["DELETE"])
+@course_board.route("/<int:idx>/delete", methods=["DELETE"])
 # @jwt_required()
-def delete_articles(idx):
+def delete_articles(idx, coidx):
     # 게시글 조회
-    article = mongo_db.board_collection.find_one({"posting_id": idx})
+    article = mongo_db.course_board_collection.find_one(
+        {"course_id": coidx, "posting_id": idx}
+    )
 
     if article:
         # 게시글 삭제
-        mongo_db.board_collection.delete_one({"posting_id": idx})
+        mongo_db.course_board_collection.delete_one({"course_id": coidx, "posting_id": idx})
         # 댓글 삭제
-        mongo_db.comment_collection.delete_many({"posting_id": idx})
+        mongo_db.course_comment_collection.delete_many({"course_id": coidx, "posting_id": idx})
 
         # 게시글 번호 재할당 로직
-        mongo_db.board_collection.update_many(
+        mongo_db.course_board_collection.update_many(
             {"posting_id": {"$gt": idx}}, {"$inc": {"posting_id": -1}}
         )
 
@@ -194,13 +193,13 @@ def delete_articles(idx):
 
 
 # [CLICK] 게시글 좋아요
-@board.route("/<int:idx>/like/click", methods=["POST"])
+@course_board.route("/<int:idx>/like/click", methods=["POST"])
 # @jwt_required()
 def click_like(idx):
     body = literal_eval(request.get_json()["body"])
     userid = body["likeuser"]
 
-    mongo_db.board_collection.update_one(
+    mongo_db.course_board_collection.update_one(
         {"posting_id": idx}, {"$push": {"likepeople": userid}}
     )
 
@@ -208,13 +207,13 @@ def click_like(idx):
 
 
 # [CANCEL] 게시글 좋아요 취소
-@board.route("/<int:idx>/like/cancel", methods=["POST"])
+@course_board.route("/<int:idx>/like/cancel", methods=["POST"])
 # @jwt_required()
 def click_like_cancel(idx):
     body = literal_eval(request.get_json()["body"])
     userid = body["likeuser"]
 
-    mongo_db.board_collection.update_one(
+    mongo_db.course_board_collection.update_one(
         {"posting_id": idx}, {"$pull": {"likepeople": userid}}
     )
 
