@@ -2,7 +2,8 @@ from model.mongodb import conn_mongodb
 from flask_login import UserMixin
 from bson import ObjectId
 from flask import jsonify
-
+from bson.json_util import dumps
+import json
 
 class Student():
     def __init__(self,id,hashed_pw,account,s_n,full_name,phone_num,father_phone_num,mother_phone_num,guardians_phone_num, course_id):
@@ -28,7 +29,8 @@ class Student():
             "phone_num" : phone_num,
             "father_phone_num" : father_phone_num,
             "mother_phone_num" : mother_phone_num,
-            "guardians_phone_num" : guardians_phone_num
+            "guardians_phone_num" : guardians_phone_num,
+            "course_id" : []
         })
         
     def delete_student(student_id):
@@ -69,4 +71,22 @@ class Student():
         mongo_db = conn_mongodb()
         row = mongo_db.student.find_one({'_id':student_id})
         return row
+    
+    def print_student_course_list(student_id):
+        mongo_db = conn_mongodb()
+        #학생이 수강중인 course의 _id 찾기
+        student_course_id_list = mongo_db.student.find_one({"_id":ObjectId(student_id)})['course_id']
+        student_course_list = []
         
+        for course_id in student_course_id_list:
+            data_list = list(mongo_db.course.find({"_id":ObjectId(course_id)}))
+            for data in data_list:
+                data['_id'] = str(data['_id'])
+                print(type(data))#dict타입
+                data['subject_name'] =mongo_db.subject.find_one({'_id':ObjectId(data['subject_id'])})['name']#dict에 subject_name 추가
+                student_course_list.append(data)
+            
+        return student_course_list            
+        # serialized_student_course_data = dumps(student_course_list,default=str)
+        # student_course_json_data = json.loads(serialized_student_course_data)
+        # return student_course_json_data

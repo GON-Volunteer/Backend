@@ -26,24 +26,24 @@ def teacher_add():
             #                     new_user['phone_num'],new_user['course_id']) teacher조회시 course정보를 같이 출력하기 테스트를 위해 course_id 추가
             
             Teacher.add_teacher(new_user['id'],new_user['pw'],new_user['account'],new_user['full_name'],
-                                new_user['phone_num'],new_user['course_id'])
+                                new_user['phone_num'])
 
             return jsonify({'code':"200",'message':'선생님 회원가입 성공!'})
+
     elif request.method == 'GET':
 
-        result = mongo_db.teacher.find()
-        serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
-        json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
+        teachers = mongo_db.teacher.find()
+        teacher_list = []
+        print(teachers)
+        for teacher in teachers:
+            data = {}
+            data['_id'] = str(teacher['_id'])
+            data['full_name'] = str(teacher['full_name'])
+            data['id'] = str(teacher['id'])
+            data['phone_num'] = str(teacher['phone_num'])
+            teacher_list.append(data)
         
-        for data in json_data:
-            student_id = data['course_id']#이후 course가 생성되면 student_id가 아니라 course_id로 바꾸기
-            student_row = mongo_db.student.find_one({'_id':ObjectId(student_id)})#이후 course가 생성되면 student_row가 아니라 course_row로 바꾸기
-            data['courses'] = [{
-                'student_name' : student_row['full_name'],
-                'student_id' : student_row['id']
-            }]
-
-        return json_data
+        return jsonify(teacher_list)
     
 @teacher.route('/<teacher_id>', methods = ['DELETE','PATCH'])
 def teacher_crud(teacher_id):
@@ -74,4 +74,8 @@ def teacher_crud(teacher_id):
                 return jsonify({"code":"400","message":"수정할 선생님을 찾을 수 없습니다."})
             else:
                 return jsonify({'code':"200",'message':'선생님정보 수정성공!'})
-                
+
+@teacher.route('/courses/<teacher_id>',methods = ['GET'])
+def teacher_course_list(teacher_id):
+    teacher_courses = Teacher.print_teacher_course_list(teacher_id)
+    return jsonify(teacher_courses)

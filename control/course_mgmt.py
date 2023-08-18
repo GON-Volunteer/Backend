@@ -1,5 +1,7 @@
 from model.mongodb import conn_mongodb
 from bson import ObjectId
+from bson.json_util import dumps
+import json
 
 class Course():
     def __init__(self,grade,section,batch,subject_id,teacher_id, student_id):
@@ -50,7 +52,9 @@ class Course():
             "grade": grade,
             "section": section,
             "batch":batch,
-            "subject_id":subject_id
+            "subject_id":subject_id,
+            "student_id" : [],
+            "teacher_id" : []
         })
 
 
@@ -102,6 +106,35 @@ class Course():
         result = mongo_db.course.delete_many({})
 
         return f"삭제된 문서 수: {result.deleted_count}"
+    
+    def find_by_course_id(course_id):
+        mongo_db = conn_mongodb()
+        row = mongo_db.course.find_one({'_id':course_id})
+        return row
 
+    def print_course_student_list(course_id):
+        mongo_db = conn_mongodb()
+        students = mongo_db.student.find({'course_id':str(course_id)})#find는 cursor객체를 반환하는데 아래 for문으로 list에 append하면 객체 주소가 아닌 실제 데이터가 출력?
+        print(students)
+        student_list = []
+        for student in students:
+            student_list.append(student)
+        print(student_list)
+
+        others = mongo_db.student.find({'course_id':{'$ne':str(course_id)}})
+        print(others)
+        others_list = []
+        for other in others:
+            others_list.append(other)
+        
+        serialized_student_data = dumps(student_list,default=str)
+        student_json_data = json.loads(serialized_student_data)
+        serialized_others_data = dumps(others_list,default=str)
+        others_json_data = json.loads(serialized_others_data)
+        
+        return student_json_data, others_json_data
+
+        
+        
 
 

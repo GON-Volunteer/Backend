@@ -72,7 +72,7 @@ def student_crud(student_id):
 
             new_data = {"$set":{
                 'id': input_data['id'],
-                 'hashed_pw' : input_data['pw'],
+                'hashed_pw' : input_data['pw'],
                 's_n' : input_data['s_n'],
                 'full_name' : input_data['full_name'],
                 'phone_num' : input_data['phone_num'],
@@ -89,6 +89,8 @@ def student_crud(student_id):
                 return jsonify({'code':"200",'message':'학생정보 수정성공!'})
                 
 
-    
-    
+@student.route('/courses/<student_id>',methods = ['GET'])
+def student_course_list(student_id):
+    student_courses = Student.print_student_course_list(student_id)
+    return jsonify(student_courses)
     

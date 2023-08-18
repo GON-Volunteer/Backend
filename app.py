@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, make_response, session
 from flask_login import LoginManager,current_user, login_required,login_user, logout_user
 from flask_cors import CORS
 
-from view import login,student,access_check,teacher,pwchange,subject,course
+from view import login,student,access_check,teacher,pwchange,subject,course, assign_release
 
 from model.mongodb import make_board_collection, make_course_collection, make_student_collection, make_subject_collection, make_teacher_collection
 #from blog_control.user_mgmt import User
@@ -30,6 +30,7 @@ app.register_blueprint(subject.subject, url_prefix = '/api/subjects')
 app.register_blueprint(teacher.teacher, url_prefix = '/api/teachers')
 app.register_blueprint(course.course, url_prefix = '/api/courses')
 app.register_blueprint(pwchange.password_change, url_prefix = '/api/password')
+app.register_blueprint(assign_release.assign, url_prefix = '/api/assign')
 
 @app.route('/')
 def home():

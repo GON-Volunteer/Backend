@@ -33,7 +33,6 @@ def create_subject():
             "message" : "동일한 과목이 존재합니다."
         })
 
-
 @subject.route('/',methods=['GET'])
 def read_subjects():
     print("enter in read_subjects()")
@@ -48,6 +47,3 @@ def delete_subject(subject_id):
     Course.delete_subject(subject_id)
 
     return jsonify({'code':"200"})
-    
-    
-    
