@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+
+{% block contents %}
+<script>
+    
+$.get("{{url_for('board.test')}}").done(function(data){
+    $("#ddd").html(data);
+}).fail(function(data){
+    alert(data);
+})
+
+</script>
+
+<!--
+var xhr = new XMLHttpRequest();
+xhr.open("get", "{{url_for('board.test')}}")
+xhr.onreadystatechange = function(){
+    if(xhr.status==200 && xhr.readyState ==4){
+        console.log(xhr.responseText);
+    }
+    var d = document.getElementById("ddd")
+    d.innerHTML = xhr.responseText;
+
+}
+xhr.send(); 
+-->
+
+<div id="ddd"></div>
+{% endblock %}

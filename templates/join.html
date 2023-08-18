@@ -1,0 +1,109 @@
+{% extends "main.html" %}
+
+{% block contents %}
+
+<script>
+
+    function checkForm(){
+        if($.trim($("#name").val())==""){
+            alert("이름을 입력하세요.");
+            $("#name").focus();
+            return false;
+        }
+        if($.trim($("#email").val())==""){
+            alert("이메일을 입력하세요.");
+            $("#email").focus();
+            return false;
+        }
+        if(!validateEmail($.trim($("#email").val()))){
+            alert("이메일 유효성이 올바르지 않습니다.");
+            $("#email").focus();
+            return false;
+        }
+        if($.trim($("#pass1").val())==""){
+            alert("비밀번호를 입력하세요.");
+            $("#pass1").focus();
+            return false;
+        }
+        if($.trim($("#pass2").val())==""){
+            alert("비밀번호를 입력하세요.");
+            $("#pass2").focus();
+            return false;
+        }
+        if($.trim($("#pass1").val()) != $.trim($("#pass2").val())){
+            alert("비밀번호가 일치하지 않습니다.");
+            $("#pass2").focus();
+            return false;
+        }
+        return true;
+    }
+</script>    
+
+
+
+<form name="form" action="{{url_for('member.member_join')}}" method="POST" onsubmit="return checkForm()">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}"> 
+    <div class="form-group">
+        <label for="name">이름</label>
+        <input class="form-control" type="text" name="name" id="name">
+    </div>
+
+    <div class="form-group">
+        <label for="email">이메일</label>
+        <input class="form-control" type="text" name="email" id="email">
+    </div>
+
+    <div class="form-group">
+        <label for="pass1">비밀번호</label>
+        <input class="form-control" type="password" name="pass" id="pass1">
+    </div>
+
+    <div class="form-group">
+        <label for="pass2">비밀번호 확인</label>
+        <input class="form-control" type="password" name="pass2" id="pass2">
+    </div>    
+
+    <div Class="text-center">
+        <input class="btn btn-primary" type="submit" value="회원가입하기">
+    </div>
+
+</form>    
+
+
+<!--
+
+<table>
+    <form name="form" action="{{url_for('member.member_join')}}" method="POST" onsubmit="return checkForm()">
+        <thead>
+            <caption>회원가입</caption>
+        </thead>    
+        
+        <tbody>
+            <tr>
+                <td>이름</td>
+                <td><input type="text" name="name" id="name"></td>
+            </tr>    
+            <tr>
+                <td>이메일</td>
+                <td><input type="text" name="email" id="email"></td>
+            </tr> 
+            <tr>
+                <td>비밀번호</td>
+                <td><input type="password" name="pass" id="pass1"></td>
+            </tr> 
+            <tr>
+                <td>비밀번호 확인</td>
+                <td><input type="password" name="pass2" id="pass2"></td>
+            </tr> 
+            <tr>
+                <td colspan="2"><input type="submit" value="가입하기"></td>
+            </tr>    
+        </tbody>  
+    </form>  
+</table>
+
+-->
+
+
+
+{% endblock %}
