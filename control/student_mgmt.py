@@ -59,7 +59,8 @@ class Student():
         mongo_db = conn_mongodb()
         exist_id = mongo_db.student.find_one({'id':input_id})
         exist_s_n = mongo_db.student.find_one({'s_n':input_sn})
-        print(exist_id)
+        print(input_sn)
+        print(type(input_sn))
         print(exist_s_n)
         
         if exist_id or exist_s_n:
@@ -70,7 +71,10 @@ class Student():
     def check_is_unique_edit(input_id,input_sn,student_id):
         mongo_db = conn_mongodb()
         exist_id = mongo_db.student.find_one({'id':input_id})
-        exist_sn = mongo_db.student.find_one({'s_n':input_sn})
+        exist_sn = mongo_db.student.find_one({'s_n':int(input_sn)})
+        print(input_sn)
+        print(type(input_sn))
+        print(exist_sn)
         
         if exist_id or exist_sn:
             if exist_id and not exist_sn:

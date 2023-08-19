@@ -20,7 +20,7 @@ def student_add():
     if request.method == 'POST':
         new_user = request.get_json()
         
-        if not Student.check_is_unique(new_user['id'],new_user['s_n']):
+        if not Student.check_is_unique(new_user['id'],int(new_user['s_n'])):
             return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
         else:
             #입력받은 비밀번호 암호화하여 db저장

@@ -133,6 +133,32 @@ class Course():
         others_json_data = json.loads(serialized_others_data)
         
         return student_json_data, others_json_data
+    
+    def print_teacher_assigend_courses():
+        mongo_db = conn_mongodb()
+        courses = mongo_db.course.find({"teacher_id":{"$ne":[]}})
+        teacher_assigned_courses = []
+        
+        for course in courses:
+            course["_id"] = str(course["_id"])
+            subject_name = mongo_db.subject.find_one({"_id":ObjectId(course['subject_id'])})['name']
+            course["subject_name"] = subject_name
+            teacher_assigned_courses.append(course)
+        
+        return teacher_assigned_courses
+    
+    def print_teacher_not_assigend_courses():
+        mongo_db = conn_mongodb()
+        courses = mongo_db.course.find({"teacher_id":[]})
+        teacher_not_assigned_courses = []
+        
+        for course in courses:
+            course["_id"] = str(course["_id"])
+            subject_name = mongo_db.subject.find_one({"_id":ObjectId(course['subject_id'])})['name']
+            course["subject_name"] = subject_name
+            teacher_not_assigned_courses.append(course)
+        
+        return teacher_not_assigned_courses
 
         
         
