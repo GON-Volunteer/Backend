@@ -12,6 +12,7 @@ access_check = Blueprint("access_check", __name__)
 @access_check.route("/", methods=["GET"])
 def check_access_token():
     token = request.headers.get("Authorization")
+    print("-------------------------------------------")
     try:
         payload = jwt.decode(token, secret_key, "HS256")
         # payload['exp']는 Numeric date 타입이고 datetime.utcnow()는 datetime.datetime타입이므로  Numeric date타입을 (UNIX 타임스탬프)로 변환
