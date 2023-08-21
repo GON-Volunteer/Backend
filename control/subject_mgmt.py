@@ -18,12 +18,12 @@ class Subject():
     def check_is_unique(name, is_elective_subject):
         mongo_db = conn_mongodb()
         exist_name = mongo_db.subject.find_one({'name': name})
-        exist_is_elective_subject = mongo_db.subject.find_one({'is_elective_subject': is_elective_subject})
+        #exist_is_elective_subject = mongo_db.subject.find_one({'is_elective_subject': is_elective_subject})
         print(name)
         print(is_elective_subject)
 
         #두 field(name과 is_elective_subject)가 같을 경우에만 false 리턴
-        if exist_name and exist_name['is_elective_subject']==is_elective_subject:
+        if exist_name:
             return False
         else:
             return True

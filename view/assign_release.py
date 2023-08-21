@@ -7,8 +7,7 @@ assign = Blueprint('assign',__name__)
 def assign_teacher_in_course():
     assign_data = request.get_json()
     print(assign_data)
-    for data in assign_data:
-        assign_teacher(data['teachers'],data['course_id'])
+    assign_teacher(assign_data['teachers'],assign_data['course_id'])
     return jsonify({"code":"200","message":"선생님 할당 완료"})
 
 @assign.route('/student',methods = ['POST'])

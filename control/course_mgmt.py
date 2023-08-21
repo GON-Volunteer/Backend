@@ -17,12 +17,12 @@ class Course:
         # Convert subject_id to ObjectId
         mongo_db = conn_mongodb()
         print("enter into delete_subject in course_mgmt.py")
-        obj_id = ObjectId(subject_id)
-        print(f"obj_id is {obj_id}")
+        #obj_id = ObjectId(subject_id)
+        #print(f"obj_id is {obj_id}")
 
         # Update documents with matching subject_id and remove subject_id field
         result = mongo_db.course.update_many(
-            {"subject_id": obj_id}, {"$unset": {"subject_id": ""}}
+            {"subject_id": subject_id}, {"$unset": {"subject_id": ""}}
         )
 
         # print(f"{result.modified_count} documents updated and subject_id removed.")
@@ -150,12 +150,17 @@ class Course:
         mongo_db = conn_mongodb()
         courses = mongo_db.course.find({"teacher_id": []})
         teacher_not_assigned_courses = []
+        subject_name = ""
 
         for course in courses:
             course["_id"] = str(course["_id"])
-            subject_name = mongo_db.subject.find_one(
-                {"_id": ObjectId(course["subject_id"])}
-            )["name"]
+            try:
+                subject_name = mongo_db.subject.find_one(
+                    {"_id": ObjectId(course["subject_id"])}
+                )["name"]
+            except:
+                course["subject_name"] = ""
+                
             course["subject_name"] = subject_name
             teacher_not_assigned_courses.append(course)
 
