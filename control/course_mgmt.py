@@ -142,7 +142,12 @@ class Course:
                 {"_id": ObjectId(course["subject_id"])}
             )["name"]
             course["subject_name"] = subject_name
+            course["teacher_name"] = []
+            for teacher_id in course["teacher_id"]:
+                course["teacher_name"].append(mongo_db.teacher.find_one({"_id":ObjectId(teacher_id)})['full_name'])
             teacher_assigned_courses.append(course)
+            
+            
 
         return teacher_assigned_courses
 
@@ -158,10 +163,11 @@ class Course:
                 subject_name = mongo_db.subject.find_one(
                     {"_id": ObjectId(course["subject_id"])}
                 )["name"]
+                course["subject_name"] = subject_name
             except:
                 course["subject_name"] = ""
                 
-            course["subject_name"] = subject_name
+            
             teacher_not_assigned_courses.append(course)
 
         return teacher_not_assigned_courses
