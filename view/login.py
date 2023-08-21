@@ -26,16 +26,20 @@ mongo_db = conn_mongodb()
 @user_login.route("/", methods=["POST"])
 def login():
     new_user = request.get_json()
-    id = new_user["id"]
-    pw = new_user["password"]
-
-    row = mongo_db.student.find_one({"id": id})
-    if row == None:
-        row = mongo_db.teacher.find_one({"id": id})
-    # pw.encode('UTF-8')은 유니코드 문자열인 PW를 UTF-8방식을 이용하여 바이트 문자열로 인코딩, row는 이미 바이트 문자열이다.
-    # 들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
-    if row and bcrypt.checkpw(pw.encode("UTF-8"), row["hashed_pw"]):
-        user_id = (row["id"],)
+    id = new_user['id']
+    pw = new_user['password']
+    
+    if mongo_db.student.find_one({'id':id}):
+        row = mongo_db.student.find_one({'id':id})
+    elif mongo_db.teacher.find_one({'id':id}):
+        row = mongo_db.teacher.find_one({'id':id})
+    else:
+        row = None
+    
+    #pw.encode('UTF-8')은 유니코드 문자열인 PW를 UTF-8방식을 이용하여 바이트 문자열로 인코딩, row는 이미 바이트 문자열이다.
+    #들어온 입력의 id가 db에 있고 비밀번호가 맞으면 token발행
+    if row and bcrypt.checkpw(pw.encode('UTF-8'),row['hashed_pw']):
+        user_id = row['id'],
         payload = {
             "user_id": user_id,
             "account": row["account"],

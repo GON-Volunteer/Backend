@@ -1,6 +1,7 @@
 from model.mongodb import conn_mongodb
 import json
 from bson import ObjectId
+
 class Subject():
     def __init__(self,name,is_elective_subject):
         self.name = name
@@ -13,7 +14,6 @@ class Subject():
             "name" : name,
             "is_elective_subject" : is_elective_subject
         })
-
 
     def check_is_unique(name, is_elective_subject):
         mongo_db = conn_mongodb()
@@ -40,11 +40,12 @@ class Subject():
             subject_list.append(subject)
             # print(subject)
 
-        subjects_json = json.dumps(subject_list)
+        #subjects_json = json.dumps(subject_list)
 
         # Print or use the JSON data as needed
 
-        return subjects_json
+        # return subjects_json
+        return subject_list
 
 
     def delete_subject(subject_id):

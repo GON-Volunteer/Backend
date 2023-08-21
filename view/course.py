@@ -68,3 +68,21 @@ def delete_courses(): #전체 course 삭제
     result_message=Course.delete_courses()
     print(result_message)
     return jsonify({'code': "200"})
+
+
+#/api/courses/{course_id}/students
+@course.route('/<course_id>/students',methods = ['GET'])
+def course_student_list(course_id):
+    student_list,others = Course.print_course_student_list(ObjectId(course_id))
+
+    return jsonify({"course_student":student_list,"not_course_student":others})
+
+@course.route('/assigned',methods = ['GET'])
+def teacher_assigend_courses():
+    course_list = Course.print_teacher_assigend_courses()
+    return jsonify(course_list)
+
+@course.route('/not-assigned',methods = ['GET'])
+def teacher_not_assigend_courses():
+    course_list = Course.print_teacher_not_assigend_courses()
+    return jsonify(course_list)
