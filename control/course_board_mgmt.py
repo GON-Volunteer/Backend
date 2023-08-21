@@ -7,21 +7,70 @@ from pymongo import MongoClient
 from bson import ObjectId
 from bson.json_util import dumps
 import json
+from view.course import course
+import jwt
 
 course_board = Blueprint("course_board", __name__)
 
 
 mongo_db = conn_mongodb()
 
-"""
-# MongoDB 연결 설정
-# MONGO_URI = "mongodb://<username>:<password>@<host>:<port>/<database>"
-MONGO_URI = "mongodb://localhost:27017/"
-client = MongoClient(MONGO_URI)
-db = client["local"]
-articles = db["articles"]
-"""
-# literal_eval - 문자열로 표현된 파이썬 데이터 구조를 원래의 데이터 구조로 변환할 때 사용됩니다. 예를 들어, "[1, 2, 3]"와 같은 문자열을 리스트 [1, 2, 3]으로 변환하거나, "{'a': 1, 'b': 2}"와 같은 문자열을 딕셔너리 {'a': 1, 'b': 2}로 변환할 때 사용할 수 있습니다.
+
+# [READ] 사용자 별 coures List 조회
+@course.route("/list", methods=["GET"])
+def course_list():
+    secret_key = "gonitproject"
+    token = request.headers.get("Authorization")
+    try:
+        payload = jwt.decode(token, secret_key, "HS256")
+        # payload['exp']는 Numeric date 타입이고 datetime.utcnow()는 datetime.datetime타입이므로  Numeric date타입을 (UNIX 타임스탬프)로 변환
+        if datetime.fromtimestamp(payload["exp"]) < datetime.utcnow():
+            payload = None
+    except:
+        payload = None
+
+    if payload == None:
+        return jsonify({"code": "400", "message": "토큰이 유효하지 않습니다."})
+    else:
+        result = mongo_db.student.find_one({"id": payload["user_id"][0]})
+        if result == None:
+            result = mongo_db.teacher.find_one({"id": payload["user_id"][0]})
+        # Find and sort documents in the 'course_collection'
+        cursor = mongo_db.course.find(
+            {
+                "$or": [
+                    {"student_id": str(ObjectId(result["_id"]))},
+                    {"teacher_id": str(ObjectId(result["_id"]))},
+                ]
+            }
+        )
+
+        course_result = []
+
+        for course_document in cursor:
+            subject_id = course_document["subject_id"]
+            subject_id = ObjectId(subject_id)
+            subject = mongo_db.subject.find_one({"_id": subject_id})
+            name = subject["name"]
+
+            result = {
+                "course_id": str(course_document["_id"]),
+                "subject_id": str(subject_id),
+                "subject_name": name,
+                "grade": str(course_document["grade"]),
+                "section": str(course_document["section"]),
+                "batch": str(course_document["batch"]),
+            }
+
+            course_result.append(result)
+        course_result.sort(key=lambda x: x["subject_name"])
+
+        if len(course_result) == 0:
+            return jsonify({"msg": "course list 조회 실패", "status": 400})
+
+        return jsonify(
+            {"msg": "course list 조회 성공", "status": 200, "list": course_result}
+        )
 
 
 # [CREATE] 게시글 생성
@@ -178,9 +227,13 @@ def delete_articles(idx, coidx):
 
     if article:
         # 게시글 삭제
-        mongo_db.course_board_collection.delete_one({"course_id": coidx, "posting_id": idx})
+        mongo_db.course_board_collection.delete_one(
+            {"course_id": coidx, "posting_id": idx}
+        )
         # 댓글 삭제
-        mongo_db.course_comment_collection.delete_many({"course_id": coidx, "posting_id": idx})
+        mongo_db.course_comment_collection.delete_many(
+            {"course_id": coidx, "posting_id": idx}
+        )
 
         # 게시글 번호 재할당 로직
         mongo_db.course_board_collection.update_many(
@@ -195,7 +248,7 @@ def delete_articles(idx, coidx):
 # [CLICK] 게시글 좋아요
 @course_board.route("/<int:idx>/like/click", methods=["POST"])
 # @jwt_required()
-def click_like(idx):
+def click_like(coidx, idx):
     body = literal_eval(request.get_json()["body"])
     userid = body["likeuser"]
 
@@ -209,7 +262,7 @@ def click_like(idx):
 # [CANCEL] 게시글 좋아요 취소
 @course_board.route("/<int:idx>/like/cancel", methods=["POST"])
 # @jwt_required()
-def click_like_cancel(idx):
+def click_like_cancel(coidx, idx):
     body = literal_eval(request.get_json()["body"])
     userid = body["likeuser"]
 

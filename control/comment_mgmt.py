@@ -93,7 +93,7 @@ def comment_click_like():
     likeuser = body["likeuser"]
 
     mongo_db.comment_collection.update_one(
-        {"_id": comment_id}, {"$push": {"likepeople": likeuser}}
+        {"comment_id": comment_id}, {"$push": {"likepeople": likeuser}}
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})
@@ -108,7 +108,7 @@ def comment_click_like_cancel():
     likeuser = body["likeuser"]
 
     mongo_db.comment_collection.update_one(
-        {"_id": comment_id}, {"$pull": {"likepeople": likeuser}}
+        {"comment_id": comment_id}, {"$pull": {"likepeople": likeuser}}
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})
