@@ -34,39 +34,82 @@ app = Flask(__name__)
 CORS(app)
 
 
-# TEST 나중에 지우삼
-mongo_db = conn_mongodb()
-pw = "1234"
-hashed_pw = bcrypt.hashpw(pw.encode("UTF-8"), bcrypt.gensalt())
-mongo_db.teacher.insert_one(
-    {
-        "id": "tgool",
-        "hashed_pw": hashed_pw,
-        "account": 0,
-        "s_n": "test",
-        "full_name": "taejin king",
-        "phone_num": "01020032003",
-        "father_phone_num": "00700",
-        "mother_phone_num": "119",
-        "guardians_phone_num": "5252",
-    }
-)
+def login_test():
+    # TEST 나중에 지우삼
+    mongo_db = conn_mongodb()
+    pw = "1234"
+    hashed_pw = bcrypt.hashpw(pw.encode("UTF-8"), bcrypt.gensalt())
+    mongo_db.teacher.insert_one(
+        {
+            "id": "tgool",
+            "hashed_pw": hashed_pw,
+            "account": 0,
+            "s_n": "test",
+            "full_name": "taejin king",
+            "phone_num": "01020032003",
+            "father_phone_num": "00700",
+            "mother_phone_num": "119",
+            "guardians_phone_num": "5252",
+        }
+    )
 
-pw2 = "1234"
-hashed_pw2 = bcrypt.hashpw(pw2.encode("UTF-8"), bcrypt.gensalt())
-mongo_db.student.insert_one(
-    {
-        "id": "tgool2",
-        "hashed_pw": hashed_pw2,
-        "account": 2,
-        "s_n": "test",
-        "full_name": "taejin student",
-        "phone_num": "01020032003",
-        "father_phone_num": "00700",
-        "mother_phone_num": "119",
-        "guardians_phone_num": "5252",
-    }
-)
+    pw2 = "1234"
+    hashed_pw2 = bcrypt.hashpw(pw2.encode("UTF-8"), bcrypt.gensalt())
+    mongo_db.student.insert_one(
+        {
+            "id": "tgool2",
+            "hashed_pw": hashed_pw2,
+            "account": 2,
+            "s_n": "test",
+            "full_name": "taejin student",
+            "phone_num": "01020032003",
+            "father_phone_num": "00700",
+            "mother_phone_num": "119",
+            "guardians_phone_num": "5252",
+        }
+    )
+
+
+def subject_test():
+    mongo_db = conn_mongodb()
+    mongo_db.subject.insert_one({"name": "korean", "is_elective_subject": "true"})
+    mongo_db.subject.insert_one({"name": "english", "is_elective_subject": "true"})
+
+
+def course_test():
+    mongo_db = conn_mongodb()
+    mongo_db.course.insert_one(
+        {
+            "grade": "1",
+            "section": "A",
+            "batch": "2020",
+            "subject_id": "64e1cc2d540cc5ee2bec3924",
+            "student_id": "64dceadbe4b3b96d8ef53a38",
+        }
+    )
+    mongo_db.course.insert_one(
+        {
+            "grade": "2",
+            "section": "B",
+            "batch": "2020",
+            "subject_id": "64e1cc2d540cc5ee2bec3925",
+            "teacher_id": "64dce45eb7ac4b5bddb3d269",
+        }
+    )
+    mongo_db.course.insert_one(
+        {
+            "grade": "3",
+            "section": "C",
+            "batch": "2020",
+            "subject_id": "64e1c87f37561477be59e884",
+        }
+    )
+
+
+# login_test()
+# subject_test()
+# course_test()
+
 
 make_board_collection()
 make_comment_collection()
