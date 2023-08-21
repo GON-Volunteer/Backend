@@ -17,7 +17,7 @@ mongo_db = conn_mongodb()
 # [CREATE] 댓글
 @course_board.route("/<int:idx>/comment/create", methods=["POST"])
 # @jwt_required()
-def create_comment(idx):
+def create_comment(coidx, idx):
     body = literal_eval(request.get_json()["body"])
     print(body)
     posting_id = idx
@@ -48,7 +48,7 @@ def create_comment(idx):
 # [READ] 댓글
 @course_board.route("/<int:idx>/comment/read", methods=["GET"])
 # @jwt_required()
-def read_comment(idx):
+def read_comment(coidx, idx):
     if request.method == "GET":
         posting_id = idx
         print("commentread_ok")
@@ -74,7 +74,7 @@ def read_comment(idx):
 # [DELETE] 댓글
 @course_board.route("/<int:idx>/comment/<int:comment_id>", methods=["DELETE"])
 # @jwt_required()
-def delete_comments(idx, comment_id):
+def delete_comments(coidx, idx, comment_id):
     # ObjectId를 사용하여 문서 삭제
     mongo_db.course_comment_collection.delete_one({"comment_id": comment_id})
     # 게시글 번호 재할당 로직
@@ -87,13 +87,13 @@ def delete_comments(idx, comment_id):
 # [CLICK] 댓글 좋아요
 @course_comment.route("/like/click", methods=["POST"])
 # @jwt_required()
-def comment_click_like():
+def comment_click_like(coidx):
     body = literal_eval(request.get_json()["body"])
     comment_id = body["comment_id"]
     likeuser = body["likeuser"]
 
     mongo_db.course_comment_collection.update_one(
-        {"_id": comment_id}, {"$push": {"likepeople": likeuser}}
+        {"comment_id": comment_id}, {"$push": {"likepeople": likeuser}}
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})
@@ -102,13 +102,13 @@ def comment_click_like():
 # [CANCEL] 댓글 좋아요 취소
 @course_comment.route("like/cancel", methods=["POST"])
 # @jwt_required()
-def comment_click_like_cancel():
+def comment_click_like_cancel(coidx):
     body = literal_eval(request.get_json()["body"])
     comment_id = body["comment_id"]
     likeuser = body["likeuser"]
 
     mongo_db.course_comment_collection.update_one(
-        {"_id": comment_id}, {"$pull": {"likepeople": likeuser}}
+        {"comment_id": comment_id}, {"$pull": {"likepeople": likeuser}}
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})
