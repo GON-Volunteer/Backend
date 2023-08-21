@@ -22,7 +22,6 @@ secret_key = "gonitproject"
 user_login = Blueprint("login", __name__)  # login/login_teacher
 mongo_db = conn_mongodb()
 
-
 @user_login.route("/", methods=["POST"])
 def login():
     new_user = request.get_json()

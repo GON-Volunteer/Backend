@@ -29,7 +29,7 @@ def create_subject():
         return jsonify({'code':"200"})
     else:
         return jsonify({
-            "code" : "200",
+            "code" : "400",
             "message" : "동일한 과목이 존재합니다."
         })
 

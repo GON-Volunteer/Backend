@@ -23,7 +23,7 @@ class Subject():
         print(is_elective_subject)
 
         #두 field(name과 is_elective_subject)가 같을 경우에만 false 리턴
-        if exist_name and exist_is_elective_subject:
+        if exist_name and exist_name['is_elective_subject']==is_elective_subject:
             return False
         else:
             return True
