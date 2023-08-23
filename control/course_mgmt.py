@@ -66,6 +66,15 @@ class Course:
         for course in courses:
             # print(course)
             course["_id"] = str(course["_id"])
+            if "teacher_id" in course:
+                teacher_id_list=course["teacher_id"]
+                course["teacher_name"]=[]
+                for teacher_id in teacher_id_list:
+                    teacher_cursor = mongo_db.teacher.find({"_id":ObjectId(teacher_id)})
+                    for teacher_document in teacher_cursor:
+                        teacher_name=teacher_document["full_name"]
+                        course["teacher_name"].append(teacher_name)
+                
             if "subject_id" in course:  # 'subject_id' 키가 있는지 확인
                 subject_id = course["subject_id"]
                 # print(f"subject_id:{subject_id}")
