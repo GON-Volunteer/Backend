@@ -5,8 +5,11 @@ assign = Blueprint('assign',__name__)
 
 @assign.route('/teacher',methods =['POST'])
 def assign_teacher_in_course():
+    print("enter in assing_teacher_in_course")
     assign_data = request.get_json()
     print(assign_data)
+    print(f"assign_data['teachers']:{assign_data['teachers']}")
+    print(f"assign_data['course_id']:{assign_data['course_id']}")
     assign_teacher(assign_data['teachers'],assign_data['course_id'])
     return jsonify({"code":"200","message":"선생님 할당 완료"})
 
