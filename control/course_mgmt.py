@@ -66,6 +66,7 @@ class Course:
         for course in courses:
             # print(course)
             course["_id"] = str(course["_id"])
+            
             if "subject_id" in course:  # 'subject_id' 키가 있는지 확인
                 subject_id = course["subject_id"]
                 # print(f"subject_id:{subject_id}")
@@ -78,14 +79,15 @@ class Course:
                     is_elective_subject = subject_document["is_elective_subject"]
                     course["subject_name"] = subject_name
                     course["is_elective_subject"] = is_elective_subject
-
+                
                 course["subject_id"] = str(course["subject_id"])
                 # print(f"modified course{course}")
                 course_list.append(course)
-
+            
             else:
                 # print("'subject_id' key not found in course:", course)
                 course_list.append(course)
+            
 
         return course_list
 
