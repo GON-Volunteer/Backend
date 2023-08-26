@@ -93,7 +93,31 @@ class Student():
                 else:
                     return False
         else:
-            return True     
+            return True
+        
+    def check_id_unique_edit(input_id,student_id):
+        mongo_db = conn_mongodb()
+        exist_id = mongo_db.student.find_one({'id':input_id})
+        if exist_id:
+            if str(exist_id['_id']) == student_id:
+                return True
+            else:
+                return False
+        else:
+            return True
+    
+    def check_sn_unique_edit(input_sn,student_id):
+        mongo_db = conn_mongodb()
+        exist_sn = mongo_db.student.find_one({'s_n':int(input_sn)})
+        if exist_sn:
+            if str(exist_sn['_id']) == student_id:
+                return True
+            else:
+                return False
+        else:
+            return True
+    
+    
         
     def find_by_student_id(student_id):
         mongo_db = conn_mongodb()
@@ -118,3 +142,22 @@ class Student():
         # serialized_student_course_data = dumps(student_course_list,default=str)
         # student_course_json_data = json.loads(serialized_student_course_data)
         # return student_course_json_data
+    
+    def check_id_unique_add(input_id):
+        mongo_db = conn_mongodb()
+        exist_id = mongo_db.student.find_one({'id':input_id})
+        
+        if exist_id:
+            return False
+        else:
+            return True
+    
+    def check_sn_unique_add(s_n):
+        mongo_db = conn_mongodb()
+        exist_sn = mongo_db.student.find_one({'s_n':s_n})
+        
+        if exist_sn:
+            return False
+        else:
+            return True
+       

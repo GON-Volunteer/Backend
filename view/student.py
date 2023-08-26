@@ -20,8 +20,12 @@ def student_add():
     if request.method == 'POST':
         new_user = request.get_json()
         
-        if not Student.check_is_unique(new_user['id'],int(new_user['s_n'])):
-            return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
+        if not Student.check_id_unique_add(new_user['id']) and not Student.check_sn_unique_add(int(new_user['s_n'])):
+            return jsonify({"code":"410", "message" : "id와 s_n가 모두 중복입니다."})
+        elif not Student.check_sn_unique_add(int(new_user['s_n'])):
+            return jsonify({"code":"409", "message" : "s_n가 중복입니다."})
+        elif not Student.check_id_unique_add(new_user['id']):
+            return jsonify({"code":"408", "message" : "아이디가 중복입니다."})
         else:
             #입력받은 비밀번호 암호화하여 db저장
             new_user['pw'] = bcrypt.hashpw(new_user['pw'].encode('UTF-8'),bcrypt.gensalt())
@@ -31,6 +35,7 @@ def student_add():
                                 new_user['phone_num'],new_user['father_phone_num'],new_user['mother_phone_num'],new_user['guardians_phone_num'])
 
             return jsonify({'code':"200",'message':'회원가입 성공!'})
+
     elif request.method == 'GET':
         
         result = mongo_db.student.find().sort("s_n",1)
@@ -42,17 +47,6 @@ def student_add():
         json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
         #print(json_data)
         return json_data
-    # elif request.method == 'GET':
-    #     page =int(request.args.get('page'))
-    #     size = int(request.args.get('size'))
-        
-    #     result = mongo_db.student.find().sort("s_n",1).skip(size*(page-1)).limit(size)
-        
-    #     serialized_data = dumps(result, default=str)#dumps() : 딕셔너리 자료형을 JSON 문자열로 만든다.
-    #     json_data = json.loads(serialized_data)#loads() : JSON 문자열을 딕셔너리로 변환
-        
-    #     return json_data
-        
 
 @student.route('/<student_id>', methods = ['DELETE','PATCH'])
 def student_crud(student_id):
@@ -64,8 +58,12 @@ def student_crud(student_id):
     if request.method == "PATCH":
         input_data = request.json
         
-        if not Student.check_is_unique_edit(input_data['id'],input_data['s_n'],student_id):
-            return jsonify({"code":"400", "message" : "아이디 혹은 s_n가 중복입니다."})
+        if not Student.check_id_unique_edit(input_data['id'],student_id) and not Student.check_sn_unique_edit(input_data['s_n'],student_id):
+            return jsonify({"code":"410", "message" : "id와 s_n가 모두 중복입니다."})
+        elif not Student.check_sn_unique_edit(input_data['s_n'],student_id):
+            return jsonify({"code":"409", "message" : "s_n가 중복입니다."})
+        elif not Student.check_id_unique_edit(input_data['id'],student_id):
+            return jsonify({"code":"408", "message" : "아이디가 중복입니다."})
         else:
             input_data['pw'] = bcrypt.hashpw(input_data['pw'].encode('UTF-8'),bcrypt.gensalt())
             target = {"_id":ObjectId(student_id)}
