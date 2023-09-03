@@ -62,10 +62,25 @@ def login_test():
 
     pw2 = "1234"
     hashed_pw2 = bcrypt.hashpw(pw2.encode("UTF-8"), bcrypt.gensalt())
-    mongo_db.student.insert_one(
+    mongo_db.teacher.insert_one(
         {
             "id": "tgool2",
             "hashed_pw": hashed_pw2,
+            "account": 1,
+            "s_n": "test",
+            "full_name": "taejin teacher",
+            "phone_num": "01020032003",
+            "father_phone_num": "00700",
+            "mother_phone_num": "119",
+            "guardians_phone_num": "5252",
+        }
+    )
+    pw3 = "1234"
+    hashed_pw3 = bcrypt.hashpw(pw3.encode("UTF-8"), bcrypt.gensalt())
+    mongo_db.student.insert_one(
+        {
+            "id": "tgool3",
+            "hashed_pw": hashed_pw3,
             "account": 2,
             "s_n": "test",
             "full_name": "taejin student",
@@ -81,6 +96,8 @@ def subject_test():
     mongo_db = conn_mongodb()
     mongo_db.subject.insert_one({"name": "korean", "is_elective_subject": "true"})
     mongo_db.subject.insert_one({"name": "english", "is_elective_subject": "true"})
+    mongo_db.subject.insert_one({"name": "muscle", "is_elective_subject": "true"})
+    mongo_db.subject.insert_one({"name": "변비학", "is_elective_subject": "true"})
 
 
 def course_test():
@@ -90,8 +107,9 @@ def course_test():
             "grade": "1",
             "section": "A",
             "batch": "2020",
-            "subject_id": "64e1cc2d540cc5ee2bec3924",
-            "student_id": "64dceadbe4b3b96d8ef53a38",
+            "subject_id": "64ec89721dd71f41fc5ce246",
+            "student_id": "64ec88e37d8cbaf84deb9398",
+            "teacher_id": "64ec88e27d8cbaf84deb9397",
         }
     )
     mongo_db.course.insert_one(
@@ -99,8 +117,9 @@ def course_test():
             "grade": "2",
             "section": "B",
             "batch": "2020",
-            "subject_id": "64e1cc2d540cc5ee2bec3925",
-            "teacher_id": "64dce45eb7ac4b5bddb3d269",
+            "subject_id": "64ec89721dd71f41fc5ce247",
+            "student_id": "64ec88e37d8cbaf84deb9398",
+            "teacher_id": "64ec88e27d8cbaf84deb9397",
         }
     )
     mongo_db.course.insert_one(
@@ -108,14 +127,26 @@ def course_test():
             "grade": "3",
             "section": "C",
             "batch": "2020",
-            "subject_id": "64e1c87f37561477be59e884",
+            "subject_id": "64ec89721dd71f41fc5ce248",
+            "student_id": "64ec88e37d8cbaf84deb9398",
+            "teacher_id": "64ec88e27d8cbaf84deb9397",
+        }
+    )
+    mongo_db.course.insert_one(
+        {
+            "grade": "4",
+            "section": "D",
+            "batch": "2023",
+            "subject_id": "64ec89721dd71f41fc5ce249",
+            "student_id": "64ec88e37d8cbaf84deb9398",
+            "teacher_id": "64ec88e27d8cbaf84deb9397",
         }
     )
 
 
 # login_test()
 # subject_test()
-# course_test()
+course_test()
 
 
 make_board_collection()

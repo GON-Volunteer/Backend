@@ -177,7 +177,7 @@ def read_article(idx, coidx):
             elif time_diff.days == 0:
                 createdate = f"{time_diff.seconds // 3600} hours ago"
             else:
-                createdate = publish_date.strftime("%m/%d")
+                createdate = publish_date.strftime("%Y/%m/%d %H:%M:%S")
 
             article = {
                 "posting_id": m["posting_id"],
