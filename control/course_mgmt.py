@@ -13,19 +13,14 @@ class Course:
         self.teacher_id = teacher_id
         self.student_id = student_id
 
-    def delete_subject(subject_id):
-        # Convert subject_id to ObjectId
+    def check_subject_assigned_course(subject_id):
         mongo_db = conn_mongodb()
-        print("enter into delete_subject in course_mgmt.py")
-        #obj_id = ObjectId(subject_id)
-        #print(f"obj_id is {obj_id}")
+        if mongo_db.course.find_one({'subject_id':subject_id}):
+            return True
+        else:
+            return False
+            
 
-        # Update documents with matching subject_id and remove subject_id field
-        result = mongo_db.course.update_many(
-            {"subject_id": subject_id}, {"$unset": {"subject_id": ""}}
-        )
-
-        # print(f"{result.modified_count} documents updated and subject_id removed.")
 
     def check_is_unique(grade, section, batch, subject_id):
         query = {
@@ -101,8 +96,21 @@ class Course:
 
     def delete_course(course_id):
         mongo_db = conn_mongodb()
-        course_id = ObjectId(course_id)
-        result = mongo_db.course.delete_one({"_id": course_id})
+        result = mongo_db.course.delete_one({"_id": ObjectId(course_id)})
+        teacher_rows = mongo_db.teacher.find({"course_id":course_id})
+        student_rows = mongo_db.student.find({"course_id":course_id})
+        for row in teacher_rows:
+            row['course_id'].remove(course_id)
+            target = {"_id":ObjectId(row['_id'])}
+            update_data = {'$set':{"course_id":row['course_id']}}
+            mongo_db.teacher.update_one(target,update_data)
+            
+        for row in student_rows:
+            row['course_id'].remove(course_id)
+            target = {"_id":ObjectId(row['_id'])}
+            update_data = {'$set':{"course_id":row['course_id']}}
+            mongo_db.student.update_one(target,update_data)
+            
         if result.deleted_count == 1:
             return f"subject doucument with _id {course_id} deleted successfully"
 

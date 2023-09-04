@@ -50,7 +50,6 @@ def student_add():
 
 @student.route('/<student_id>', methods = ['DELETE','PATCH'])
 def student_crud(student_id):
-    
     if request.method == "DELETE":
         Student.delete_student(student_id)
         return jsonify({"code":"200","message":"삭제가 완료되었습니다."})

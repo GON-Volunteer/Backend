@@ -56,7 +56,6 @@ def read_courses():
 
 @course.route('/<course_id>', methods=['DELETE'])
 def delete_course(course_id):
-    print("enter in delete_course()")
     result_message=Course.delete_course(course_id)
     print(result_message)
     return jsonify({'code': "200"})

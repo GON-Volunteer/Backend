@@ -51,11 +51,5 @@ class Subject():
     def delete_subject(subject_id):
         mongo_db = conn_mongodb()
         subject_id = ObjectId(subject_id)
-        result= mongo_db.subject.delete_one({'_id':subject_id})
-        if result.deleted_count==1:
-            return f"subject doucument with _id {subject_id} deleted successfully"
-        # else:
-        #     return f"Subject document with _id {subject_id} not found or not deleted"
-
-
-    
+        mongo_db.subject.delete_one({'_id':ObjectId(subject_id)})
+        

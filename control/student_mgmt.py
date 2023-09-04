@@ -36,13 +36,14 @@ class Student():
     def delete_student(student_id):
         mongo_db = conn_mongodb()
         delete_condition={"_id":ObjectId(student_id)}
-        row = mongo_db.course.find_one({"student_id":ObjectId(student_id)})
-        print("delete_student_func")
-        print(row)
-        if row:
-            print("find student_id in course")
-            target = {"student_id":ObjectId(student_id)}
-            update_data = {'$set':{"student_id":None}}
+        rows = mongo_db.course.find({"student_id":student_id})
+        
+        for row in rows:
+            print("77777777777777777")
+            print(type(row['student_id']))
+            row['student_id'].remove(student_id)
+            target = {"_id":ObjectId(row['_id'])}
+            update_data = {'$set':{"student_id":row['student_id']}}
             mongo_db.course.update_one(target,update_data)
         
         mongo_db.student.delete_one(delete_condition)

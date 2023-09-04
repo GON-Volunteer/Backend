@@ -55,14 +55,17 @@ class Teacher():
     def delete_teacher(teacher_id):
         mongo_db = conn_mongodb()
         delete_condition={"_id":ObjectId(teacher_id)}
-        row = mongo_db.course.find_one({"teacher_id":ObjectId(teacher_id)})
-        print("delete_teacher_func")
-        print(row)
-        if row:
-            print("find teacher_id in course")
-            target = {"teacher_id":ObjectId(teacher_id)}
-            update_data = {'$set':{"teacher_id":None}}
+        rows = mongo_db.course.find({"teacher_id":teacher_id})
+        for row in rows:
+            row['teacher_id'].remove(teacher_id)
+            target = {"_id":ObjectId(row['_id'])}
+            update_data = {'$set':{"teacher_id":row['teacher_id']}}
             mongo_db.course.update_one(target,update_data)
+            
+        # if row:
+        #     target = {"teacher_id":ObjectId(teacher_id)}
+        #     update_data = {'$set':{"teacher_id":None}}
+        #     mongo_db.course.update_one(target,update_data)
         
         mongo_db.teacher.delete_one(delete_condition)
     
