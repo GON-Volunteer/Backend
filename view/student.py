@@ -20,11 +20,11 @@ def student_add():
     if request.method == 'POST':
         new_user = request.get_json()
         
-        if not Student.check_id_unique_add(new_user['id']) and not Student.check_sn_unique_add(int(new_user['s_n'])):
+        if (not Student.check_id_unique_add(new_user['id']) or not Teacher.check_is_unique(new_user['id'])) and not Student.check_sn_unique_add(int(new_user['s_n'])):
             return jsonify({"code":"410", "message" : "id와 s_n가 모두 중복입니다."})
         elif not Student.check_sn_unique_add(int(new_user['s_n'])):
             return jsonify({"code":"409", "message" : "s_n가 중복입니다."})
-        elif not Student.check_id_unique_add(new_user['id']):
+        elif (not Student.check_id_unique_add(new_user['id']) or not Teacher.check_is_unique(new_user['id'])):
             return jsonify({"code":"408", "message" : "아이디가 중복입니다."})
         else:
             #입력받은 비밀번호 암호화하여 db저장
