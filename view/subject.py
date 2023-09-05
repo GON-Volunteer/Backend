@@ -35,15 +35,14 @@ def create_subject():
 
 @subject.route('/',methods=['GET'])
 def read_subjects():
-    print("enter in read_subjects()")
     json_subject_list=Subject.get_subjects()
 
     return jsonify(json_subject_list)
 
 @subject.route('/<subject_id>',methods=['DELETE'])
 def delete_subject(subject_id):
-    print("enter in delete_subjects()")
-    result_message=Subject.delete_subject(subject_id)
-    Course.delete_subject(subject_id)
-
-    return jsonify({'code':"200"})
+    if Course.check_subject_assigned_course(subject_id):
+        return jsonify({'code':"420",'message':'subject를 삭제할 수 없습니다. 먼저 course를 삭제해 주세요'})
+    else:
+        Subject.delete_subject(subject_id)
+        return jsonify({'code':"200",'message':"subject 삭제 완료!"})
