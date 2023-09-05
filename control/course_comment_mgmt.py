@@ -21,6 +21,7 @@ def create_comment(coidx, idx):
     body = literal_eval(request.get_json()["body"])
     print(body)
     posting_id = idx
+    course_id = coidx
     user_id = body["user_id"]
     full_name = body["full_name"]
     content = body["content"]
@@ -29,9 +30,9 @@ def create_comment(coidx, idx):
     # 댓글 번호 찾기
     current_count = mongo_db.course_comment_collection.count_documents({})
     new_no = current_count + 1
-    print(date)
 
     comment = {
+        "course_id": course_id,
         "comment_id": new_no,
         "posting_id": posting_id,
         "user_id": user_id,
@@ -51,10 +52,13 @@ def create_comment(coidx, idx):
 def read_comment(coidx, idx):
     if request.method == "GET":
         posting_id = idx
+        course_id = coidx
         print("commentread_ok")
 
         lst = []
-        for m in mongo_db.course_comment_collection.find({"posting_id": posting_id}):
+        for m in mongo_db.course_comment_collection.find(
+            {"course_id": course_id, "posting_id": posting_id}
+        ):
             lst.append(
                 {
                     # ObjectId를 문자열로 변환
@@ -75,8 +79,11 @@ def read_comment(coidx, idx):
 @course_board.route("/<int:idx>/comment/<int:comment_id>", methods=["DELETE"])
 # @jwt_required()
 def delete_comments(coidx, idx, comment_id):
+    course_id = coidx
     # ObjectId를 사용하여 문서 삭제
-    mongo_db.course_comment_collection.delete_one({"comment_id": comment_id})
+    mongo_db.course_comment_collection.delete_one(
+        {"course_id": course_id, "comment_id": comment_id}
+    )
     # 게시글 번호 재할당 로직
     mongo_db.course_comment_collection.update_many(
         {"comment_id": {"$gt": comment_id}}, {"$inc": {"comment_id": -1}}
@@ -88,12 +95,14 @@ def delete_comments(coidx, idx, comment_id):
 @course_comment.route("/like/click", methods=["POST"])
 # @jwt_required()
 def comment_click_like(coidx):
+    course_id = coidx
     body = literal_eval(request.get_json()["body"])
     comment_id = body["comment_id"]
     likeuser = body["likeuser"]
 
     mongo_db.course_comment_collection.update_one(
-        {"comment_id": comment_id}, {"$push": {"likepeople": likeuser}}
+        {"course_id": course_id, "comment_id": comment_id},
+        {"$push": {"likepeople": likeuser}},
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})
@@ -103,12 +112,14 @@ def comment_click_like(coidx):
 @course_comment.route("like/cancel", methods=["POST"])
 # @jwt_required()
 def comment_click_like_cancel(coidx):
+    course_id = coidx
     body = literal_eval(request.get_json()["body"])
     comment_id = body["comment_id"]
     likeuser = body["likeuser"]
 
     mongo_db.course_comment_collection.update_one(
-        {"comment_id": comment_id}, {"$pull": {"likepeople": likeuser}}
+        {"course_id": course_id, "comment_id": comment_id},
+        {"$pull": {"likepeople": likeuser}},
     )
 
     return jsonify({"msg": "삭제성공", "status": 200})

@@ -87,7 +87,8 @@ def create_article(coidx):
     # postingid = str(user_id) + ";" + str(publish_date)
 
     # 게시글 번호 찾기
-    current_count = mongo_db.course_board_collection.count_documents({})
+    filter_condition = {"course_id": coidx}
+    current_count = mongo_db.course_board_collection.count_documents(filter_condition)
     new_no = current_count + 1
 
     print(content, publish_date, type(user_id))
@@ -145,7 +146,6 @@ def read_article_list(coidx):
             m["full_name"] = m.get("full_name", "")
             m["publish_date"] = m.get("publish_date", "")
             lst.append(m)
-        print("check")
         return jsonify({"msg": "게시글 조회 성공", "status": 200, "list": lst})
 
 
@@ -253,7 +253,7 @@ def click_like(coidx, idx):
     userid = body["likeuser"]
 
     mongo_db.course_board_collection.update_one(
-        {"posting_id": idx}, {"$push": {"likepeople": userid}}
+        {"course_id": coidx, "posting_id": idx}, {"$push": {"likepeople": userid}}
     )
 
     return jsonify({"msg": "좋아요 성공", "status": 200})
@@ -267,7 +267,7 @@ def click_like_cancel(coidx, idx):
     userid = body["likeuser"]
 
     mongo_db.course_board_collection.update_one(
-        {"posting_id": idx}, {"$pull": {"likepeople": userid}}
+        {"course_id": coidx, "posting_id": idx}, {"$pull": {"likepeople": userid}}
     )
 
     return jsonify({"msg": "좋아요 취소 성공", "status": 200})
