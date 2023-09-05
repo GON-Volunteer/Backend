@@ -146,7 +146,7 @@ def course_test():
 
 # login_test()
 # subject_test()
-course_test()
+# course_test()
 
 
 make_board_collection()
