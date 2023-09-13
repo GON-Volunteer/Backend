@@ -22,13 +22,6 @@ from view import (
 from control import board_mgmt, comment_mgmt, course_board_mgmt, course_comment_mgmt
 import bcrypt
 from model.mongodb import conn_mongodb
-from model.mongodb import (
-    make_board_collection,
-    make_course_collection,
-    make_student_collection,
-    make_subject_collection,
-    make_teacher_collection,
-)
 
 # from blog_control.user_mgmt import User
 import os
